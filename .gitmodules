@@ -1,0 +1,3 @@
+[submodule "cybercommons"]
+	path = cybercommons
+	url = https://github.com/ou-ecolab/cybercommons.git
