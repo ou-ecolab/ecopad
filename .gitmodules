@@ -1,3 +1,6 @@
 [submodule "cybercommons"]
 	path = cybercommons
 	url = https://github.com/ou-ecolab/cybercommons.git
+[submodule "ecopadq"]
+	path = ecopadq
+	url = https://github.com/ou-ecolab/ecopadq.git
