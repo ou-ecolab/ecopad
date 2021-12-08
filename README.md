@@ -20,14 +20,13 @@ The ecopad project has some requirement that can **not** be met by a **single** 
    
 1. The project combines several codebases that live in different repositories.
    We solve this by the use of [Git-submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
-   [label: 1]
-
+  
 1. The cybercommons infrastructure uses the repositories for additional tasks apart from version control, 
    namely to transfer the code for the tasks to the workers. 
    We will use temporary test branches to address this to avoid cluttering our version history.
 
 
-Concerning 1.):
+Concerning 1.:
    - Why is this necessary? 
       - Some of the infrastructure (cybercommons) is shared with other projects which are not related to ecopad.
       - The system is usually distributed across several machines with different roles that require 
@@ -49,7 +48,7 @@ Concerning 1.):
          - If we deploy a new version of ecopad to our servers (including the workers for the models)  and thus have to checkout different repositories to different machines) we can be
            sure that we get commits of the different subrepos that are compatible with each other and work together. 
 
-Concerning 2.): 
+Concerning 2.: 
    - Challange:
      
      Since the celery workers receive their tasks by installing them from a remote git-hub repository, we are forced to commit
