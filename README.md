@@ -57,6 +57,10 @@ Concerning 2.:
      If we would directly push them to the main branch of this repository, we would create a bunch of intermediate commits, that would neither work nor have a decent commit message. Although we could later (after our final commit has achieved our goal) combine our little commits to one (by using git rebase and squash) and write a descriptive summary commit message, this practice of 'rewriting history' is actually strongly discouraged for all repositories except our local one. 
    - Solution: 
       - Use a shortlive temporay branch to test and combine our changes.
+        ```bash
+        cd ecopad/ecopadq/ecopadq/tasks
+        ```
+     
         We give an example for a chnage in our task list.
         The steps are the following (and actually much quicker than this description suggests):
         - create a temporary test-branch of [ecopadq](https://github.com/ou-ecolab/ecopadq) (with a name like tmp_test_diagram clearly indicating it's short live span and discouraging other people from checking it out) 
