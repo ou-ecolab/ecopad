@@ -57,7 +57,146 @@ Concerning 2.:
      If we would directly push them to the main branch of this repository, we would create a bunch of intermediate commits, that would neither work nor have a decent commit message. Although we could later (after our final commit has achieved our goal) combine our little commits to one (by using git rebase and squash) and write a descriptive summary commit message, this practice of 'rewriting history' is actually strongly discouraged for all repositories except our local one. 
    - Solution: 
           
-          
+### FortranExample 
+We give an example that will add an new task in our tasklist which will actually be performed by a seperate container, that runs some Fortran code. This example assumes that you have cloned the repository on your local machine by:
+
+ ```bash
+ git clone --recurse-submodules https://github.com/ou-ecolab/ecopad.git
+ ```
+    
+We will first create a test branch of the ecopad repostitoy so that non of our changes will affect the commit history of the main branch unless we want them to.
+```
+cd ecopad
+git checkout -b test 
+```
+    
+Now we create a new repository  under the ou-ecolab organisation (you can do this on the website https://github.com/ou-ecolab (Hit the green New button, name it as you wan and add a README.md so that the repo is not empty.) 
+I will name it `FotranExample` here.  You can later remove your example repository, but we will not worry about this now and present the steps necessarry for adding a real project.  
+
+We integrate the new repo  as a submodule in the ecopad repository:
+    
+```bash
+cd ~/ecopad
+git submodule add https://github.com/ou-ecolab/FortranExample.git
+cd FortranExample
+```
+Now create the `Dockerfile`
+```
+From ubuntu:18.04
+RUN apt-get update
+RUN apt-get install -y gfortran
+```
+Run the following command to create the new docker image:
+
+```Bash
+docker build -t test:latest .
+```
+
+### Run the container(image) and connect to it interactively
+
+```Bash
+docker run -it test:latest bash
+```
+In the container type:
+
+```Bash
+gfortran -v
+```
+Which will give you some verbose information about the gfortran compiler and prooves that it is installed. 
+
+## Extend the container with some Fortran code
+
+The following is a very simple Fortran code with the input from command line. In this example, you will learn how the code receives the arguments from the command line. Copy the code to an empty file (**e.g., test.f90**) in the same directory as the `Dockerfile`.
+
+```Fortran
+program main
+
+    character(len=10) first_command_line_argument   !declaration
+    character(len=10) second_command_line_argument  !declaration
+
+    call getarg(1, first_command_line_argument)     !get argument
+    call getarg(2, second_command_line_argument)    !get argument
+
+    print *, first_command_line_argument            !print 
+    print *, second_command_line_argument           !print
+
+end program
+
+Fortran utilizes the function ``getarg()`` to receive the arguments from command line. In the model, the paths to some crucial files are usually passed by command line arguments. Thus, it is important for us tu know how it works.
+```
+Open the `Dockerfile` and add the following lines 
+```
+COPY test.f90 /root/
+WORKDIR /root
+RUN gfortran -o test.o test.f90
+```
+
+Get out of the container (Ctr-D) 
+Rebuild it:
+```Bash
+docker build -t test:latest .
+```
+
+Once finished, you may run the docker image (this time without interaction) with:
+
+```Bash
+docker run test ./test.o test1 test2
+```
+
+In the command, ``test`` is the docker image we justed created. ``./test.o`` is the executable file in the ``WORKDIR`` of the docker image.
+``test1`` and ``test2`` are two command line arguments.
+
+## Create a new task in EcoPAD
+
+This section will guide you how to create a new task, which is very essential to further develop the platform.
+Tasks are defined in a python package which lives in the subrepository: [ecopadq](https://github.com/ou-ecolab/ecopadq). 
+Every time we restart cybercommons it will download this package from github and install this package and make the tasks available in on the api website 
+(on your local machine under http://localhost/api/queue/)
+
+We enter the appropriate subdirectory of ecopad (It has already been checked out recursively for us) and also create a temporary test branch of the subrepo. This is important since the fact that cybercommons will download its task from from github forces us to commit and push our changes even before we know that they will work. Additionally we will most likely need several commits until we get everything to work. To keep the resulting mess out of the commit history of the main branch we record it in the testbranch it and will `rewrite` this chapter it before we commit it to the main branch.
+
+(assuming we are in `ecopad`)
+```
+cd ecopadq
+git checkout -b test
+```
+Now open the file:
+``` 
+Every function create in the file tasks.py with the decorator ``app.@task()`` can be recognized as a task in EcoPAD. 
+You may create a new function in the file 
+```
+images_saved/config/celery/env/lib/python2.7/site-packages/ecopadq/tasks/tasks.py
+```
+as follows:
+
+
+```Python
+@app.task() 
+def test(pars):
+    task_id = str(test.request.id)
+    input_a = pars["test1"]
+    input_b = pars["test2"]
+    docker_opts = None
+    docker_cmd = "./test.o {0} {1}".format(input_a, input_b)
+    result = docker_task(docker_name="test", docker_opts=None, docker_command=docker_cmd, id=task_id)
+    return input_a + input_b
+
+```
+
+
+
+
+
+The steps are the following (and actually much quicker than this description suggests):
+    - create a temporary test-branch of [ecopadq](https://github.com/ou-ecolab/ecopadq) (with a name like tmp_test_diagram clearly indicating it's short live span and discouraging other people from checking it out) 
+     - temporarily change the cybercommons configuration to use this branch.
+     - change commit and push our changes to this branch until we achieve our desired feature.
+     - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
+      - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
+      - push (to the remote branch)
+      - remove the temporary branch locally and remotely.
+      - change the cybercommons config back to the main branch [ecopadq](https://github.com/ou-ecolab/ecopadq) 
+   
 
    - Benefits:
 
