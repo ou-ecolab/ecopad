@@ -56,12 +56,31 @@ Concerning 2.:
      and push all the experimental changes to the repository that contains our tasks (in our case [ecopadq](https://github.com/ou-ecolab/ecopadq).) before we even know that they will work.
      If we would directly push them to the main branch of this repository, we would create a bunch of intermediate commits, that would neither work nor have a decent commit message. Although we could later (after our final commit has achieved our goal) combine our little commits to one (by using git rebase and squash) and write a descriptive summary commit message, this practice of 'rewriting history' is actually strongly discouraged for all repositories except our local one. 
    - Solution: 
-      - Use a shortlive temporay branch to test and combine our changes.
+          
+          
+FortranExample 
+        We give an example that will add an new task in our tasklist which will actually be performed by a 
+        seperate container, that runs some Fortran code.
+        This example assumes that you have cloned the repository on your local machine by:
+        
         ```bash
-        cd ecopad/ecopadq/ecopadq/tasks
+        git clone --recurse-submodules https://github.com/ou-ecolab/ecopad.git
         ```
-     
-        We give an example for a chnage in our task list.
+        
+        We will first create a test branch of the ecopad repostitoy so that non of our changes will affect the commit history of the main branch unless we want them to.
+        ```
+        cd ecopad
+        git checkout -b test 
+        ```
+        
+        Now we create a new repository  under the ou-ecolab organisation (you can do this on the website https://github.com/ou-ecolab (Hit the new button and name it (I will name it `FotranExample` here and add a README.md so that the repo is not empty. We can later remove this repository, but we will not worry about this and present the steps necessarry for adding a real project.  
+        Then we integrate it as a submodule in the ecopad repository:
+        
+        ```bash
+        cd ~/ecopad
+        git submodule add https://github.com/ou-ecolab/FortranExample.git
+        ```
+
         The steps are the following (and actually much quicker than this description suggests):
         - create a temporary test-branch of [ecopadq](https://github.com/ou-ecolab/ecopadq) (with a name like tmp_test_diagram clearly indicating it's short live span and discouraging other people from checking it out) 
          - temporarily change the cybercommons configuration to use this branch.
