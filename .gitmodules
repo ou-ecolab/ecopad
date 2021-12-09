@@ -4,3 +4,6 @@
 [submodule "ecopadq"]
 	path = ecopadq
 	url = https://github.com/ou-ecolab/ecopadq.git
+[submodule "FortranExample"]
+	path = FortranExample
+	url = https://github.com/ou-ecolab/FortranExample.git
