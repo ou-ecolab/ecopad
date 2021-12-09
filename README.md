@@ -221,18 +221,48 @@ make run
 The next step is to see if our changes are reflected on the api website. To check point your browser to `http://localhost/api/queue/`
 and see a new url under "Tasks" ` "http://localhost/api/queue/run/ecopadq.tasks.tasks.test/"` 
 So far so good. Now click on it!
+and 
 
 
 
-you will see an error message:
-d```
-To find out *what* went wrong we look at the log files of the celery container.
-
-```docker ps``` will show us the running containers. Look for `celeryapp` in the list and replace the `CONTAINER ID` left of it in the following command:
-
+Unfortunately you will finally see an error message:
 ```
-docker logs 
+TTP 200 OK
+Allow: GET, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "task_id": "9cafbb06-075a-4d4f-befa-8d049caf70a5",
+    "user": "ecopad",
+    "task_name": "ecopadq.tasks.tasks.test",
+    "args": [
+        {
+            "test1": "Hello",
+            "test2": "World"
+        }
+    ],
+    "kwargs": {},
+    "queue": "celery",
+    "timestamp": "2021-12-09T06:21:19.660000",
+    "tags": [],
+    "result": {
+        "status": "FAILURE",
+        "result": {
+            "exc_type": "NameError",
+            "exc_message": [
+                "name 'docker_task' is not defined"
+            ],
+            "exc_module": "builtins"
+        },
+        "traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/celery/app/trace.py\", line 450, in trace_task\n    R = retval = fun(*args, **kwargs)\n  File \"/usr/local/lib/python3.9/site-packages/celery/app/trace.py\", line 731, in __protected_call__\n    return self.run(*args, **kwargs)\n  File \"/home/celery/.local/lib/python3.9/site-packages/ecopadq/tasks/tasks.py\", line 38, in test\n    result = docker_task(docker_name=\"test\", docker_opts=None, docker_command=docker_cmd, id=task_id)\nNameError: name 'docker_task' is not defined\n",
+        "children": [],
+        "date_done": "2021-12-09T06:21:19.663313"
+    }
+}
 ```
+That tells you that the function `docker_task` is not defined.
+
      - change commit and push our changes to this branch until we achieve our desired feature.
      - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
       - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
