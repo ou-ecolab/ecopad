@@ -196,11 +196,34 @@ git push
 
 To tell cybercommons to use the new version of its tasks queue we have to (temporarily) change its config 
 (Assuming that you cloned ecopad into your home directory)
+```bash
+cd ~/ecopad/cybercommons/dc_config
 ```
-cd 
-cd ~/ecopad/cybercommons/
+in the file `cybercom_config.env` change the line
 ```
-The next step is to see if we can see
+CELERY_SOURCE=git+https://github.com/ou-ecolab/ecopadq
+
+```
+to 
+```
+CELERY_SOURCE=git+https://github.com/ou-ecolab/ecopadq@test
+```
+(The `@test` at the end is the branch that celery (a part of cybercommons) will use.)  
+
+Now we restart the cybercommons application.
+
+```bash
+cd ~/ecopad/cybercommons
+make stop
+make run
+```
+
+The next step is to see if our changes are reflected on the api website. To check point your browser to `http://localhost/api/queue/`
+and check if a new Task appeared in the "Tasks" list!
+If so click on the new task.
+
+
+
      - change commit and push our changes to this branch until we achieve our desired feature.
      - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
       - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
