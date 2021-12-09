@@ -57,21 +57,31 @@ Concerning 2.:
      If we would directly push them to the main branch of this repository, we would create a bunch of intermediate commits, that would neither work nor have a decent commit message. Although we could later (after our final commit has achieved our goal) combine our little commits to one (by using git rebase and squash) and write a descriptive summary commit message, this practice of 'rewriting history' is actually strongly discouraged for all repositories except our local one. 
    - Solution: 
           
-### FortranExample 
-We give an example that will add an new task in our tasklist which will actually be performed by a seperate container, that runs some Fortran code. This example assumes that you have cloned the repository on your local machine by:
+### Fortran Task Tutorial 
+This is a quite comprehensive example that will touch nearly all components of ecopad.
+In order to reproduce some of the situations you will likely encounter while extending and maintaining the project, the tutorial  **deliberately contains intermediate (failing) code** along with
+the corrections and some hints for debugging. 
+The padagogical aim is to simulate a realistic workflow.
+#### Assumend Technical Goal
+Assume that we want to add a new feature to the ecopad website for which a new model has to be run, which is implemented in Fortran.
+We will make these changes available in the repo so that every developer can check them on his local machine. 
+
+If you have not cloned the ecopad repository on your local machine do so now  by:
 
  ```bash
  git clone --recurse-submodules https://github.com/ou-ecolab/ecopad.git
  ```
     
-We will first create a test branch of the ecopad repostitoy so that non of our changes will affect the commit history of the main branch unless we want them to.
+We will first create a test branch of the ecopad repository so that non of our changes will affect the commit history of the main branch unless we want them to.
 ```
 cd ecopad
 git checkout -b test 
 ```
     
 Now we create a new repository  under the ou-ecolab organisation (you can do this on the website https://github.com/ou-ecolab (Hit the green New button, name it as you wan and add a README.md so that the repo is not empty.) 
-I will name it `FotranExample` here.  You can later remove your example repository, but we will not worry about this now and present the steps necessarry for adding a real project.  
+I will name it `FotranExample` here.  
+(Since we are in a branch that we can remove later, all traces of our example repository will be gone along with it.
+So we do not have to worry about this and can present the same steps as if we were adding a repo for real).  
 
 We integrate the new repo  as a submodule in the ecopad repository:
     
@@ -146,7 +156,7 @@ docker run test ./test.o test1 test2
 In the command, ``test`` is the docker image we justed created. ``./test.o`` is the executable file in the ``WORKDIR`` of the docker image.
 ``test1`` and ``test2`` are two command line arguments.
 
-## Create a new task in EcoPAD
+#### Create a new task in ecopadq
 
 This section will guide you how to create a new task, which is very essential to further develop the platform.
 Tasks are defined in a python package which lives in the subrepository: [ecopadq](https://github.com/ou-ecolab/ecopadq). 
@@ -161,15 +171,13 @@ cd ecopadq
 git checkout -b test
 ```
 Now open the file:
-``` 
-Every function create in the file tasks.py with the decorator ``app.@task()`` can be recognized as a task in EcoPAD. 
+```
+ecopadq/tasks/tasks.py
+```
+
+Every function create in the file tasks.py with the decorator ``app.@task()`` is recognized by cybercommons . 
 You may create a new function in the file 
-```
-images_saved/config/celery/env/lib/python2.7/site-packages/ecopadq/tasks/tasks.py
-```
-as follows:
-
-
+Add the following code.
 ```Python
 @app.task() 
 def test(pars):
@@ -180,16 +188,19 @@ def test(pars):
     docker_cmd = "./test.o {0} {1}".format(input_a, input_b)
     result = docker_task(docker_name="test", docker_opts=None, docker_command=docker_cmd, id=task_id)
     return input_a + input_b
-
 ```
+To make these changes available to be used by cybercommons we have to commit and push them. 
+```bash
+git commit -m 'added an example task to be run fortran conde in a docker container'
+git push
 
-
-
-
-
-The steps are the following (and actually much quicker than this description suggests):
-    - create a temporary test-branch of [ecopadq](https://github.com/ou-ecolab/ecopadq) (with a name like tmp_test_diagram clearly indicating it's short live span and discouraging other people from checking it out) 
-     - temporarily change the cybercommons configuration to use this branch.
+To tell cybercommons to use the new version of its tasks queue we have to (temporarily) change its config 
+(Assuming that you cloned ecopad into your home directory)
+```
+cd 
+cd ~/ecopad/cybercommons/
+```
+The next step is to see if we can see
      - change commit and push our changes to this branch until we achieve our desired feature.
      - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
       - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
