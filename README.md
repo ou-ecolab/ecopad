@@ -58,38 +58,6 @@ Concerning 2.:
    - Solution: 
           
           
-FortranExample 
-        We give an example that will add an new task in our tasklist which will actually be performed by a 
-        seperate container, that runs some Fortran code.
-        This example assumes that you have cloned the repository on your local machine by:
-        
-        ```bash
-        git clone --recurse-submodules https://github.com/ou-ecolab/ecopad.git
-        ```
-        
-        We will first create a test branch of the ecopad repostitoy so that non of our changes will affect the commit history of the main branch unless we want them to.
-        ```
-        cd ecopad
-        git checkout -b test 
-        ```
-        
-        Now we create a new repository  under the ou-ecolab organisation (you can do this on the website https://github.com/ou-ecolab (Hit the new button and name it (I will name it `FotranExample` here and add a README.md so that the repo is not empty. We can later remove this repository, but we will not worry about this and present the steps necessarry for adding a real project.  
-        Then we integrate it as a submodule in the ecopad repository:
-        
-        ```bash
-        cd ~/ecopad
-        git submodule add https://github.com/ou-ecolab/FortranExample.git
-        ```
-
-        The steps are the following (and actually much quicker than this description suggests):
-        - create a temporary test-branch of [ecopadq](https://github.com/ou-ecolab/ecopadq) (with a name like tmp_test_diagram clearly indicating it's short live span and discouraging other people from checking it out) 
-         - temporarily change the cybercommons configuration to use this branch.
-         - change commit and push our changes to this branch until we achieve our desired feature.
-         - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
-          - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
-          - push (to the remote branch)
-          - remove the temporary branch locally and remotely.
-          - change the cybercommons config back to the main branch [ecopadq](https://github.com/ou-ecolab/ecopadq) 
 
    - Benefits:
 
