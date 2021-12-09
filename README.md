@@ -219,11 +219,20 @@ make run
 ```
 
 The next step is to see if our changes are reflected on the api website. To check point your browser to `http://localhost/api/queue/`
-and check if a new Task appeared in the "Tasks" list!
-If so click on the new task.
+and see a new url under "Tasks" ` "http://localhost/api/queue/run/ecopadq.tasks.tasks.test/"` 
+So far so good. Now click on it!
 
 
 
+you will see an error message:
+d```
+To find out *what* went wrong we look at the log files of the celery container.
+
+```docker ps``` will show us the running containers. Look for `celeryapp` in the list and replace the `CONTAINER ID` left of it in the following command:
+
+```
+docker logs 
+```
      - change commit and push our changes to this branch until we achieve our desired feature.
      - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
       - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
