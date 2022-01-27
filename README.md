@@ -374,8 +374,8 @@ git commit -m 'your commit message'
 git push
 ```
 
-Now we go up again and check in the version of `cybercommons` and `ecopadq` that we know work well together
-and described the accomplishment of this commit without replecation of the details we expressed already in the commit messages of the submodules. Eventually we want to record this changes in the main branch but for now we check them into a test branch (If we start with this practice we have a better chance to keep the main branch clean)
+Now we go up again and check in the versions of `cybercommons` and `ecopadq` that we know work well together
+and describe the accomplishment of this commit without replication of the details we expressed already in the commit messages of the submodules. Eventually we want to record this changes in the main branch but for now we check them into a test branch (If we start with this practice we have a better chance to keep the main branch clean)
 
 ```bash
 cd ..
@@ -411,4 +411,11 @@ git merge {yourname}
 
 
 
-Note that we do not have to do this for every commit of one of the subrepos, only if we want to make those changes available automatically via a single pull command in 
+Note that we do not have to do this for every commit of one of the subrepos, only if we want to make a new version of the whole ecopad system. (We can pull push and merge happily in the subrepos without affecting what a potential new dev would clone from the top level repo ecopad...
+
+
+### Step 2
+Change your fortan example to create two plots (sin and cosine) and add at least one parameter for to the form on the website. What happens to the output files of the fortran containers?
+Why does your example container need  access to a subfolder of the webserver root `cybercommons/web/`?
+At the moment we use a javascript library `plotly` to create plots directly in the browser. Can you create a container that produces the output from the files produced by the fortran container? 
+
