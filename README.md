@@ -57,7 +57,7 @@ Concerning 2.:
      Since the celery workers receive their tasks by installing them from a remote git-hub repository, we are forced to commit
      and push all the experimental changes to the repository that contains our tasks (in our case [ecopadq](https://github.com/ou-ecolab/ecopadq).) before we even know that they will work.
      If we would directly push them to the main branch of this repository, we would create a bunch of intermediate commits, that would neither work nor have a decent commit message. Although we could later (after our final commit has achieved our goal) combine our little commits to one (by using git rebase and squash) and write a descriptive summary commit message, this practice of 'rewriting history' is actually strongly discouraged for all publicly shared repositories. 
-   - Solution: 
+  
           
 ### Getting Started Tutorial 
 This is a quite comprehensive example that will touch nearly all the components of ecopad we will get into contact with.
@@ -94,7 +94,7 @@ I will describe here how to see it using  `chrome`.
 - to open the developer tools in my version I have to go to `more tools` -> `Developer tools` 
   This will divide the window. There should be a rider `Sources` showing the contents of `demo.js`
   and also the console 
-- hit the `send to API` button again and watch the little status window and the console geting busy with outputs .
+- hit the `send to API` button(on the example website)  again and watch the little status window and the console geting busy with outputs .
 - read the outputs! Please! ;-) to get a picture of what is going on. 
   It seems that 
   - the button triggers code that sends `json` data to another url
@@ -120,9 +120,9 @@ So lets do it and
   The "Tasks History" link suggests that cybercommons does some kind of bookkeeping for us, who triggered which   task and when... It needs a database to do this, so we will not be surprised if we find configuration for it later.
 
 Our next question is where those possible tasks are defined. How does (our very much stripped down version of) ecopad know which tasks to offer us in the queue and how to access them?
-Without help we would start reading the cypercommons documentation and find that it basically is a web front end for a widely used package called `celery` which does the actual scheduling and monitoring. Reading through the 'celery' documentation we would find that `celery` has a client server structure and a 'client' can set up multiple 'workers' to which it distributes the task code by means of a queue repository. 
+Without help we would start reading the cybercommons documentation and find that it basically is a web front end for a widely used package called `celery` which does the actual scheduling and monitoring. Reading through the 'celery' documentation we would find that `celery` has a client server structure and a 'client' can set up multiple 'workers' to which it distributes the task code by means of a queue repository. 
 Thats our clue. Although in our present configuration 'client' and 'worker' live on the same mashine they still use a (github) repository to store the code for the tasks.
-Fortunately you already cloned this repository when you use the `git clone --recurse-submodule` command.
+Fortunately you already cloned this repository when you used the `git clone --recurse-submodule` command.
 It is on the toplevel of your `ecopad` directory.
  
 
@@ -134,7 +134,7 @@ Every time we restart cybercommons it will download this package from github, in
 (on your local machine under http://localhost/api/queue/)
 
 We enter the appropriate subdirectory of ecopad (It has already been checked out recursively for us) and also create a temporary test branch of the subrepo.
-This is important since the fact that the celery worker will download it's tasks from from github forces us to commit and push our changes even before we know that they will work.(This is cumbersome but rooted in the client server structure of celery. We could scale to many workers on different mashines and for this general situation we need some kind of code distribution) 
+This is important since the fact that the celery worker will download it's tasks from github forces us to commit and push our changes even before we know that they will work.(This is cumbersome but rooted in the client server structure of celery. We could scale to many workers on different machines and for this general situation we need some kind of code distribution) 
 Additionally we will most likely need several commits until we get everything to work. To keep the resulting mess out of the commit history of the main branch we will record it in the testbranch it and will `rewrite` this chapter it before we commit it to the main branch.
 
 I suggest that you call your test branch {yourname} to make the name unique and avoid conflicts with somebody elses test branch.
@@ -156,7 +156,7 @@ You may create a new function in the file
 
 To make these changes available to be used by cybercommons we have to commit and push them. 
 ```bash
-git commit -m 'added an example task to be run fortran code in a docker container'
+git commit -m 'added an example task to  run fortran code in a docker container'
 git push
 ```
 
@@ -186,11 +186,8 @@ make run
 ```
 
 The next step is to see if our changes are reflected on the api website. To check point your browser to `http://localhost/api/queue/`
-and see a new url under "Tasks" ` "http://localhost/api/queue/run/ecopadq.tasks.tasks.test/"` 
+and see a new url under "Tasks" ` "http://localhost/api/queue/run/ecopadq.tasks.tasks.{YourName}Example/"` 
 So far so good. Now click on it!
-
-
-
 
      - change commit and push our changes to this branch until we achieve our desired feature.
      - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
@@ -201,8 +198,9 @@ So far so good. Now click on it!
    
 Intermediate Summary:
 We have created a new task for ecopad. We can reach it from the REST-api and pretend (for the moment)
-that it does something different that the `test` example.
-Note 
+that it does something different than the `test` example.
+
+Note: 
 - that the fact that we use 'ssh' for the 'test' and your new task (to perform it in a docker container that is   connected via an internal network)  is by no means necessary for all tasks. 
   Look at the `add` function (also check it out via the api ) which is completely written in `python`. 
   We use containers only because this is the use case for the models in the present ecopad. 
@@ -226,7 +224,7 @@ Change to this directory
 and issue the following command:
 `git remote -v` 
 This tells you the url of your remote companion repository on github.
-No go one level up in the directory structure and issue the same command
+Now go one level up in the directory structure and issue the same command
 ```bash
 cd ..
 git remote -v
