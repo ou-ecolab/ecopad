@@ -60,10 +60,14 @@ Concerning 2.:
    - Solution: 
           
 ### Getting Started Tutorial 
-This is a quite comprehensive example that will touch nearly all components of ecopad.
-The padagogical aim is to simulate a realistic workflow.
+This is a quite comprehensive example that will touch nearly all the components of ecopad we will get into contact with.
+The aim is to simulate a realistic workflow without the threat of messing up a production system.
 If you have not installed  ecopad on your local machine yet 
 start with the installation part of this README. This is neccessary to continue.
+It would also be helpful to understand submodules (read https://git-scm.com/book/en/v2/Git-Tools-Submodules rather now then later) 
+It will also help to know the reason why WE use them, which is explained in this 
+README under the topic "Git setup explained"
+
 Assuming that you have succesfully completed the installation a version of ecopad containing
 a minimal example is already running.
 To see the example in action point your browser to http://localhost/ecopad_portal/ 
@@ -71,19 +75,146 @@ Log in with the credentials you provided during the installation process and the
 `send to API` and watch what happens.
 
 #### Goals
-Assume that we want to add a new feature to the website you are looking at for which a new model has to be run.  The repository contains an example in Fortran as a prototype.
+Assume that we want to add a new feature to the website you are looking at for which a new model has to be run. The repository contains an example in Fortran as a prototype.
 We will go about this in several steps
 1. You will create  a functionally identical copy and integrate it into ecopad. This will walk you through the 
-directory and repository structure and  familiarize you with the git mechanics.
+directory and repository structure and familiarize you with the (quite elaborate) git mechanics.
 
-2. You will change the functionality a tiny bit, and make some intentional changes to different parts of the code. 
+1. You will change the functionality a tiny bit, and make some intentional changes to different parts of the code. 
 
 We will make these changes available in this repo and its submodules so that every developer can check them on his local machine. 
 
 #### Step 1 
 
+Where to start?  We know that we want to make the results of 
+a model written in Fortran accessible via a webpage. So we could either start at a model or the webpage.
+If we were forced to reverse engineer the whole project we would probably start at the website and work our way through its javascript code. We will not have to go so deep, but we should at least look at it to know where to come back later.
+We use the developer tools of the browser to do so.
+I will describe here how to see it using  `chrome`.
+- to open the developer tools in my version I have to go to `more tools` -> `Developer tools` 
+  This will divide the window. There should be a rider `Sources` showing the contents of `demo.js`
+  and also the console 
+- hit the `send to API` button again and watch the little status window and the console geting busy with outputs .
+- read the outputs! Please! ;-) to get a picture of what is going on. 
+  It seems that 
+  - the button triggers code that sends `json` data to another url
+  - receives a result url in return 
+  - pesters this result url (every 5 seconds)  with requests until it returns "SUCCESS"
+
+There is some good news here:
+- Our (ecopad specific) code is actually  pretty short.
+- The real work of starting jobs and tracking their status is done by something else (the `cybercommons` framework)
+- We communicate with this framework via urls. (technically `cybercommons` provides what is called a `REST-api`)
+The last point is actually VERY useful. We can hit those urls that our website code is talking to directly with our browser. This peels away one layer of complexity and enables us to remote control cybercommons without OUR frontend website (because it provides one itself).
+Although it is not an alternative it is great for testing out all the other parts. (Our model and the task queue about which we will talk later)
+So lets do it and 
+- hit the first url you saw our website talking to.
+  http://localhost/api/queue/run/ecopadq.tasks.tasks.test/
+  We could use this page to actually trigger the same computation that our button 'sent to API' starts.
+  We could reverse engineer our javascript code to see how many and which arguments it actually transmits and put those manually in the "args" field. But it becomes a bit easier to guess if you see the receiving end of this code.
+  Our `test` task is not the only one. 
+  To see the other(s) 
+- remove the last bit of the url and hit http://localhost/api/queue/
+- remove even more and go to http://localhost/api
+  The interesting links here are the last one under "User Profile" and the first two under "Queue"
+  The "Tasks History" link suggests that cybercommons does some kind of bookkeeping for us, who triggered which   task and when... It needs a database to do this, so we will not be surprised if we find configuration for it later.
+
+Our next question is where those possible tasks are defined. How does (our very much stripped down version of) ecopad know which tasks to offer us in the queue and how to access them?
+Without help we would start reading the cypercommons documentation and find that it basically is a web front end for a widely used package called `celery` which does the actual scheduling and monitoring. Reading through the 'celery' documentation we would find that `celery` has a client server structure and a 'client' can set up multiple 'workers' to which it distributes the task code by means of a queue repository. 
+Thats our clue. Although in our present configuration 'client' and 'worker' live on the same mashine they still use a (github) repository to store the code for the tasks.
+Fortunately you already cloned this repository when you use the `git clone --recurse-submodule` command.
+It is on the toplevel of your `ecopad` directory.
+ 
+
+#### Create a new task in ecopadq
+
+This section will guide you how to create a new task, which is very essential to further development of the platform.
+Tasks are defined in a python package which lives in the subrepository: [ecopadq](https://github.com/ou-ecolab/ecopadq). 
+Every time we restart cybercommons it will download this package from github, install it  and make the tasks available in on the api website 
+(on your local machine under http://localhost/api/queue/)
+
+We enter the appropriate subdirectory of ecopad (It has already been checked out recursively for us) and also create a temporary test branch of the subrepo.
+This is important since the fact that the celery worker will download it's tasks from from github forces us to commit and push our changes even before we know that they will work.(This is cumbersome but rooted in the client server structure of celery. We could scale to many workers on different mashines and for this general situation we need some kind of code distribution) 
+Additionally we will most likely need several commits until we get everything to work. To keep the resulting mess out of the commit history of the main branch we will record it in the testbranch it and will `rewrite` this chapter it before we commit it to the main branch.
+
+I suggest that you call your test branch {yourname} to make the name unique and avoid conflicts with somebody elses test branch.
+(assuming we are in `ecopad`)
+```
+cd ecopadq
+git remote -v # just to see where we are..
+git checkout -b {yourname}
+```
+Now open the file:
+```
+ecopadq/tasks/tasks.py
+```
+
+Every function in the file `tasks.py` with the decorator ``app.@task()`` is recognized by cybercommons . 
+You may create a new function in the file 
+- Identify the code of the function for the 'test' example.
+- copy, paste and rename the function to the name you want to use (for instance `{yourName}Example`) 
+
+To make these changes available to be used by cybercommons we have to commit and push them. 
+```bash
+git commit -m 'added an example task to be run fortran code in a docker container'
+git push
+```
+
+To tell cybercommons to use the new version of its tasks queue we have to (temporarily) change its config 
+(Assuming we are in the ecopad folder)
+```bash
+cd cybercommons/dc_config
+```
+in the file `cybercom_config.env` change the line
+```
+CELERY_SOURCE=git+https://github.com/ou-ecolab/ecopadq
+
+```
+to 
+```
+CELERY_SOURCE=git+https://github.com/ou-ecolab/ecopadq@{yourname}
+```
+(Don't write the {} the only indicate that you should write your name there)
+(The `@{yourname}` at the end is the branch that celery will use.)  
+
+Now we restart the cybercommons application.
+
+```bash
+cd cybercommons
+make stop
+make run
+```
+
+The next step is to see if our changes are reflected on the api website. To check point your browser to `http://localhost/api/queue/`
+and see a new url under "Tasks" ` "http://localhost/api/queue/run/ecopadq.tasks.tasks.test/"` 
+So far so good. Now click on it!
+
+
+
+
+     - change commit and push our changes to this branch until we achieve our desired feature.
+     - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
+      - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
+      - push (to the remote branch)
+      - remove the temporary branch locally and remotely.
+      - change the cybercommons config back to the main branch [ecopadq](https://github.com/ou-ecolab/ecopadq) 
+   
+Intermediate Summary:
+We have created a new task for ecopad. We can reach it from the REST-api and pretend (for the moment)
+that it does something different that the `test` example.
+Note 
+- that the fact that we use 'ssh' for the 'test' and your new task (to perform it in a docker container that is   connected via an internal network)  is by no means necessary for all tasks. 
+  Look at the `add` function (also check it out via the api ) which is completely written in `python`. 
+  We use containers only because this is the use case for the models in the present ecopad. 
+- that our new task is available through the REST-api of cybercommons but not yet on OUR website.
+  We will have to connect it.
+
+#### create a new docker container 
+
 Now we create a new repository  under the ou-ecolab organisation (you can do this on the website https://github.com/ou-ecolab (Hit the green New button, name it as you want and add a README.md so that the repo is not empty.) 
 I will call it `{YourName}Example` here.  
+
+This will be eventually the home of the changed example.
 
 The first question is where this new repository should live in the directory structure of ecopad. 
 The example on the website can be found in: 
@@ -126,8 +257,6 @@ Go back to the cybercommons folder and do it:
 cd cybercommons/dc_config/images
 git submodule add https://github.com/ou-ecolab/{YourName}Example
 ```
-To understand submodules read https://git-scm.com/book/en/v2/Git-Tools-Submodules now or later.
-The reason why WE use them, is explained in this README under the topic Git setup explained.
 
 Now copy the files from the `local_fortran_example` directory to `{YourName}Example` and take a look at them with an editor.
 Then add them to your repo command and commit your changes and push them to github.
@@ -167,11 +296,12 @@ git commit -m "Your commit message"
 ```
 Short summary:
 You have created and configured  a docker container thet is a prototype for a model.
-You can build and run it using the `docker-compose` command but it is not yet integrated in any way with 
-the website. It is also not clear yet which role the other containers play in the process.
-These will be our next goals.
+You can build and run it using the `docker-compose` command but it is not yet integrated with 
+the website. 
 
-Task:
+
+Tasks:
+1. Go back to the last subsection and change the code in the task queue to use YOUR new fortran container.
 1. Open the `docker-compose.yml` again and look at the information concerning your new container.
    Make sure that you understand what these instructions mean. If you are unfamiliar wiht docker go
    throug the minimal tutorial https://docs.docker.com/get-started/ which provides you with the basic 
@@ -183,91 +313,104 @@ Task:
 
 
 
-We will first create a test branch of the ecopad repository so that non of our changes will affect the commit history of the main branch unless we want them to.
-To make path descriptions easier I assume from now on that you changed into the directory where you cloned the repository.
+#### Add your example into the website
 
-
-#### Create a new task in ecopadq
-
-This section will guide you how to create a new task, which is very essential to further develop the platform.
-Tasks are defined in a python package which lives in the subrepository: [ecopadq](https://github.com/ou-ecolab/ecopadq). 
-Every time we restart cybercommons it will download this package from github, install it  and make the tasks available in on the api website 
-(on your local machine under http://localhost/api/queue/)
-
-We enter the appropriate subdirectory of ecopad (It has already been checked out recursively for us) and also create a temporary test branch of the subrepo. This is important since the fact that cybercommons will download its task from from github forces us to commit and push our changes even before we know that they will work. Additionally we will most likely need several commits until we get everything to work. To keep the resulting mess out of the commit history of the main branch we record it in the testbranch it and will `rewrite` this chapter it before we commit it to the main branch.
-
-(assuming we are in `ecopad`)
-```
-cd ecopadq
-git checkout -b test
-```
-Now open the file:
-```
-ecopadq/tasks/tasks.py
-```
-
-Every function create in the file tasks.py with the decorator ``app.@task()`` is recognized by cybercommons . 
-You may create a new function in the file 
-Add the following code.
-```Python
-@app.task() 
-def test(pars):
-    task_id = str(test.request.id)
-    input_a = pars["test1"]
-    input_b = pars["test2"]
-    docker_opts = None
-    docker_cmd = "./test.o {0} {1}".format(input_a, input_b)
-    result = docker_task(docker_name="test", docker_opts=None, docker_command=docker_cmd, id=task_id)
-    return input_a + input_b
-```
-To make these changes available to be used by cybercommons we have to commit and push them. 
+The HTML of our webpage is found in `cybercommons/web/ecopad_portal/` (assuming you are in `ecopad`) and is
+also  (you guessed it) a submodule. 
+Convince yourself!
 ```bash
-git commit -m 'added an example task to be run fortran conde in a docker container'
+cd cybercommons/web/ecopad_portal
+git remote -v
+```
+The procedure probably starts to look familiar.
+
+- create a test branch
+  ```bash
+  git checkout -b {yourname}
+  ```
+- copy and paste the relevant HTML in index.html (make a new rider) and functions in demo.js to connect to 
+  the new task in the queue.
+- check with the browser until you are happy.(often reloading the page with Ctrl-F5 to erase the cache)
+  This should in our special case of copying not involve any changes to the ecopadq, but for a real example 
+  probably would. You would likely use the REST-api directly to make sure that you send the information your 
+  task (in ecopadq) expects.
+  Obviously ecopad has to run 
+- refactor (remove all duplicated code...) while testing.
+- check in your changes into your testbranch
+
+#### Integrate all the changes into a commit of ecopad with the correct version of the subrepos 
+
+We mentioned the submodule structure.
+			ecopad
+
+	ecopadq							cybercommons
+			
+					ecopad_portal	local_fortran_exiample 	{YourName}Example
+
+The repos with subrepos are ecopad and cybercommons. 
+The ecopad repository tracks (in addition to it's files, mainly this README) the commit hashes of **main** branch of cybercommons and the **master** branch of ecopadq. The point is that it does not track our test branches. 
+In the same way the cybercommons repo tracks (in addition to it's own files)  the commit hashes of the **master** branches of ecopad_portal the **main** branch of local_fortran_example 
+and whatever is the current gitbuh default branch for {YourName}Example.
+The purpose of tracking the independent repositories as submodules is to allow them to have their own commits but to be able to pick out a particular combination of versions that we know works (have tested to work) with the other parts.
+When we want to make such a commit to 'cybercommons' and finally 'ecopad' we first have to merge the changes in the submodule branches into their respective master/main branches.
+
+We start from the bottom up. The only subrepo of cybercommons that has any branches is probably `ecopad_portal`
+Assuming that you have checked in your changes you can switch to the master branch, pull the latest changes (in case somebody changed something in the meantime) and merge your testbranch.
+(assuming you are in ecopad)
+```bash
+cd cybercommons/web/ecopad_portal/
+git checkout master
+git pull
+git merge {yourname}
+```
+Then we go up and check in the changes to cybercommons.
+Always use `git status` to make sure you don't commit unintentional changes.
+E.g. make sure that you reverted the changes in the config file  `cybercommons/dc_config/cybercom_config.env`
+back to the original ecopadq.
+```bash
+cd ../..
+git status 
+git add web/ecopad_portal
+git add dc_config/images/{YourName}Example
+git commit -m 'your commit message'
 git push
+```
 
-To tell cybercommons to use the new version of its tasks queue we have to (temporarily) change its config 
-(Assuming that you cloned ecopad into your home directory)
-```bash
-cd ~/ecopad/cybercommons/dc_config
-```
-in the file `cybercom_config.env` change the line
-```
-CELERY_SOURCE=git+https://github.com/ou-ecolab/ecopadq
-
-```
-to 
-```
-CELERY_SOURCE=git+https://github.com/ou-ecolab/ecopadq@test
-```
-(The `@test` at the end is the branch that celery (a part of cybercommons) will use.)  
-
-Now we restart the cybercommons application.
+Now we go up again and check in the version of `cybercommons` and `ecopadq` that we know work well together
+and described the accomplishment of this commit without replecation of the details we expressed already in the commit messages of the submodules. Eventually we want to record this changes in the main branch but for now we check them into a test branch (If we start with this practice we have a better chance to keep the main branch clean)
 
 ```bash
-cd ~/ecopad/cybercommons
-make stop
+cd ..
+git status 
+git checkout -b {yourname}
+git add cybercommons ecopadq
+git commit -m "Integrated a new example model into the website."
+git push
+```
+
+
+In the future we will hopefully have some automated tests on github that are triggered by a push (to whatever branch). If those tests succeed we would merge the testbranch into the master.
+To check the test branch manually you could stop your running ecopad, rename the containing folder it and check out the version you just commited. This is what a CI tool would do. In case you forget to commit some important file or change it will brake (in contrast to your local version wich will run on YOUR machine, since you have
+the files you forgot to commit...)
+
+```bash
+cd cybercommons
+make stop 
+cd ..
+mv ecopad ecopad.bak
+git clone --recurse-submodules https://github.com/ou-ecolab/ecopad.git
+git checkout {yourname}
+cd ecopad/cybercommons
 make run
 ```
+If this is successfull you can merge the testbranch into the master.
 
-The next step is to see if our changes are reflected on the api website. To check point your browser to `http://localhost/api/queue/`
-and see a new url under "Tasks" ` "http://localhost/api/queue/run/ecopadq.tasks.tasks.test/"` 
-So far so good. Now click on it!
+```bash
+git checkout master
+git pull #in case somebody else worked on it
+git merge {yourname}
+```
 
 
 
-
-     - change commit and push our changes to this branch until we achieve our desired feature.
-     - rewrite history for this branch by squashing our experimental commits into one and write a commit message for the combined commit
-      - locally checkout the main branch and merge the temporary branch into it (this will be only the working commit resulting from our rebase with the nice commit message)
-      - push (to the remote branch)
-      - remove the temporary branch locally and remotely.
-      - change the cybercommons config back to the main branch [ecopadq](https://github.com/ou-ecolab/ecopadq) 
-   
-
-   - Benefits:
-
-       We have only one intentianal change in the master branch that works and is described by a commit message that describes purpose and consequences of the change instead of possibly many back and forth changes of which only the last one works...
-       As a result we can keep the master branch clean so that whenever we come back to a commit we know that the code works.
-       
-[here](./development.md)
-
+Note that we do not have to do this for every commit of one of the subrepos, only if we want to make those changes available automatically via a single pull command in 
