@@ -11,7 +11,7 @@ To clone it use
  ```
 This will check out the subrepositories (in coordinated compatible versions) as subfolders. 
 ```bash
-       cd ecopad/cybercommonds
+       cd ecopad/cybercommons
 ```
 follow the [installations instrtuctions of the cybercommons package:](https://github.com/ou-ecolab/cybercommons) and write down the username and password that you type in since you will later need it to use the api.
 
