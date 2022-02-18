@@ -16,8 +16,7 @@ This will check out the subrepositories (in coordinated compatible versions) as 
 follow the [installations instrtuctions of the cybercommons package:](https://github.com/ou-ecolab/cybercommons) and write down the username and password that you type in since you will later need it to use the api.
 
 Edit from Nico: 
-Going to the cybercommons instructions I got stuck almost immediately. I forked the repo but the first instruction states the following:
-Edit values within dc_config/cybercom_config.env, which are files I could not locate. Additionally, how do I edit these files? The README should be a bit more specific on how to do this, and also where I can find the files after cloning the EcoPAD repo.
+Cybercommons is a submodule of this repo. Thus, if any changes are made on the Cybercommons they will not be pushed to the repo unless specified specifically in Git. An easy work around for this (if you see yourself editing anything in cybercommons) is to run "git config push.recurseSubmodules on-demand" in your git terminal on your branch.
 
 # Development: Extending or changing ecopad 
 ## Git setup explained
