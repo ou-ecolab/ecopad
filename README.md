@@ -158,6 +158,7 @@ You may create a new function in the file
 - copy, paste and rename the function to the name you want to use (for instance `{yourName}Example`) 
 
 To make these changes available to be used by cybercommons we have to commit and push them. 
+> Nico: if the commit does not work the first time, run "git add ecopadq/tasks/tasks.py"
 ```bash
 git commit -m 'added an example task to  run fortran code in a docker container'
 git push
