@@ -211,6 +211,7 @@ Note:
 
 Now we create a new repository  under the ou-ecolab organisation (you can do this on the website https://github.com/ou-ecolab (Hit the green New button, name it as you want and add a README.md so that the repo is not empty.) 
 I will call it `{YourName}Example` here.  
+> Nico: Make sure you name your repositroy something in all lowercase letters! In the instrucitons with the "make shell" command later on you will run into trouble. 
 
 This will be eventually the home of the changed example.
 
@@ -257,7 +258,7 @@ git submodule add https://github.com/ou-ecolab/{YourName}Example
 ```
 
 Now copy the files from the `local_fortran_example` directory to `{YourName}Example` and take a look at them with an editor.
-Then add them to your repo command and commit your changes and push them to github.
+Then add them to your repo command and commit your changes and push them to github (The commands below will not copy the files into your new submodle's folder, so ensure you do that manually first). 
 ```bash
 cd {YourName}Example
 git add dockerfile entrypoint.sh start_sshd.sh test.f90
@@ -272,6 +273,7 @@ Open it with an editor, find the section that deals with the `local_fortran_exam
 in your new section change every occurence of `local_fortran_example` to `{YourName}Example`.
 Now we can test your new container. 
 (You have to be in the `cybercommons` directory for the following commands to work)
+> Nico: If you ended up creating a github repo with uppercase characters, you will do something a little different. Instead of replacing every occurence of `local_fortran_example` to `{YourName}Example`, you will do that for every occurance except the one next to the heading "image:". For this one, we will convert the `{YourName}Example` to all lowercase, and then replace `local_fortran_example` with that. This is because docker images cannot have uppercase letters in them.
 ```bash
 make shell
 docker-compose build {YourName}Example
