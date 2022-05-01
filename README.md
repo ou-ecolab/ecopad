@@ -367,7 +367,7 @@ Then we go up and check in the changes to cybercommons.
 Always use `git status` to make sure you don't commit unintentional changes.
 E.g. make sure that you reverted the changes in the config file  `cybercommons/dc_config/cybercom_config.env`
 back to the original ecopadq.
-> Nico: second to last command was "git add dc_config/images/{YourName}Example ." in order to work. My thoughts are the content of the directory was changed, so I needed to do a recursive add in that folder.
+> Nico: second to last command was "git add dc_config/images/{YourName}Example ." in order to work. My thoughts are the content of the directory was changed, so I needed to do a recursive add in that folder. Additionally, if you get a warning message from git about adding a repo insid of another, do a "git  submodule add <url to your repo> dc_config/images/{YourName}Example" 
 ```bash
 cd ../..
 git status 
