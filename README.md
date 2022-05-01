@@ -407,6 +407,7 @@ cd cybercommons
 make run
 ```
 If this is successfull you can merge the testbranch into the master.
+> Nico: This is a Continous Integration test. Thus, when you go to where ecopad is launched do not expect full functionality, but that you can actually see the default ecopad_portal webpage ok. If this is the case then your commit didn't break the whole program!
 
 ```bash
 git checkout master
