@@ -379,6 +379,7 @@ git push
 
 Now we go up again and check in the versions of `cybercommons` and `ecopadq` that we know work well together
 and describe the accomplishment of this commit without replication of the details we expressed already in the commit messages of the submodules. Eventually we want to record this changes in the main branch but for now we check them into a test branch (If we start with this practice we have a better chance to keep the main branch clean)
+> Nico: You mnay need to do a "git push --set-upsteam origin {yourname}" here if git tells you to.
 
 ```bash
 cd ..
