@@ -398,11 +398,12 @@ the files you forgot to commit...)
 ```bash
 cd cybercommons
 make stop 
-cd ..
+cd ../..
 mv ecopad ecopad.bak
 git clone --recurse-submodules https://github.com/ou-ecolab/ecopad.git
+cd ecopad
 git checkout {yourname}
-cd ecopad/cybercommons
+cd cybercommons
 make run
 ```
 If this is successfull you can merge the testbranch into the master.
