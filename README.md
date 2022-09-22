@@ -5,6 +5,9 @@ This Repository is intended as an umbrella for the site specific ecopad installa
 It contains the different repositories that constitute the ecopad code base as [submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules). 
 
 # Installation on a single computer:
+**Important note:** If you are on a **windows machine you have to create a linux vm** first.
+In your linux environment you will need to have git installed. For more requirements make sure to consult the link to the installation instructions for cybercommons below.
+
 To clone it use 
 ```bash
        git clone --recurse-submodules https://github.com/ou-ecolab/ecopad.git
