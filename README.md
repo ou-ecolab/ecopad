@@ -5,8 +5,10 @@ This Repository is intended as an umbrella for the site specific ecopad installa
 It contains the different repositories that constitute the ecopad code base as [submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules). 
 
 # Installation on a single computer:
-**Important note:** If you are on a **windows machine you have to create a linux vm** first.
-In your linux environment you will need to have git installed. For more requirements make sure to consult the link to the installation instructions for cybercommons below.
+**Important notes:** 
+1. To be allowed to push we will have to add you as a collaborator. Contact one of the contributors to invite you via your github account!
+1. If you are on a **windows machine you have to create a linux vm** first.
+   In your linux environment you will need to have git installed. For more requirements make sure to consult the link to the installation instructions for    cybercommons below.
 
 To clone it use 
 ```bash
