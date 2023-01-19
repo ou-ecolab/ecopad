@@ -20,6 +20,26 @@ This will check out the subrepositories (in coordinated compatible versions) as 
 ```
 follow the [installations instrtuctions of the cybercommons package:](https://github.com/ou-ecolab/cybercommons) and write down the username and password that you type in since you will later need it to use the api.
 
+# Red cloud installation at CAC 
+(Please!!! read the whole paragraph before pasting it's contents)
+You need to have a CAC account (Cornell Advanced Computing) and access to 
+project rjk322_0091! 
+You can write an email to cac-help@cornell.edu
+
+After you have your credentials you can log in to  access the webinterface to our machine here https://redcloud.cac.cornell.edu/
+The name of our server is ```ecopad-vm```
+To access our server you will need to create a rsa keypair and add the public key to the server via the webinterface.
+and the private key to YOUR .ssh/ directory on the local computer you want to use to access the server FROM. (On a linux machine  ssh-keygen will put both keys there by default).
+The webinterface also allows you to run or shelf the virtual machine.
+Make sure it is running!
+After you have added your pubkey you can access our server via its floating (=persistent) ip address.
+via
+```bash
+ssh ubuntu@128.84.9.117
+```
+Some documentation can be found herehttps://www.cac.cornell.edu/wiki/index.php?title=Red_Cloud#Important_Pages
+ 
+
 # Development: Extending or changing ecopad 
 ## Git setup explained
 ### Special Project Requirements
