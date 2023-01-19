@@ -37,7 +37,15 @@ via
 ```bash
 ssh ubuntu@128.84.9.117
 ```
-Some documentation can be found herehttps://www.cac.cornell.edu/wiki/index.php?title=Red_Cloud#Important_Pages
+ubuntu is the administrator account (can become root), use it to create a user for yourself, and add the user to the `sudo` and `docker` groups
+```
+sudo adduser yourLogin
+sudo usermod -a -G sudo yourLogin
+sudo usermod -aG docker yourLogin
+
+```
+
+Some documentation can be found here https://www.cac.cornell.edu/wiki/index.php?title=Red_Cloud#Important_Pages
  
 
 # Development: Extending or changing ecopad 
