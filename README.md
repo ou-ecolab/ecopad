@@ -26,7 +26,8 @@ You need to have a CAC account (Cornell Advanced Computing) and access to
 project rjk322_0091! 
 You can write an email to cac-help@cornell.edu
 
-After you have your credentials you can log in to  access the webinterface to our machine here https://redcloud.cac.cornell.edu/
+After you have your credentials you can log in to  access the webinterface to our machine here https://redcloud.cac.cornell.edu/ 
+(Some instructions how to fill the fields are found here:https://www.cac.cornell.edu/wiki/index.php?title=OpenStack)
 The name of our server is ```ecopad-vm```
 To access our server you will need to create a rsa keypair and add the public key to the server via the webinterface.
 and the private key to YOUR .ssh/ directory on the local computer you want to use to access the server FROM. (On a linux machine  ssh-keygen will put both keys there by default).
