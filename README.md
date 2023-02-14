@@ -29,8 +29,18 @@ You can write an email to cac-help@cornell.edu
 After you have your credentials you can log in to  access the webinterface to our machine here https://redcloud.cac.cornell.edu/ 
 (Some instructions how to fill the fields are found here:https://www.cac.cornell.edu/wiki/index.php?title=OpenStack)
 The name of our server is ```ecopad-vm```
-To access our server you will need to create a rsa keypair and add the public key to the server via the webinterface.
-and the private key to YOUR .ssh/ directory on the local computer you want to use to access the server FROM. (On a linux machine  ssh-keygen will put both keys there by default).
+To access our server you will need to create a rsa keypair
+- add the private key to YOUR .ssh/ directory *on the local computer* you want to use to access the server FROM.
+  (On a linux machine  ssh-keygen will put both keys there by default)
+- and the pubkey (e.g. id_rsa.pub) in the /home/YourLoginOnTheServer/.ssh/authorizedkeys file on the *server*
+If no colleage who already has root access is available (to help you put your key in `authorizedkeys`) you have to: 
+  - use the console of the webinterface to log in
+  - modify the /etc/ssh/sshd config to allow passwordlogin (change ```PasswordAuthentication no``` to     ```PasswordAuthentication yes```
+  - reload or restart the ssh service ```sysctl restart ssh```
+  - use the ```ssh-copy-id``` command from your local machine.
+    (to log in you have to have created the login and set a password with passwd possibly via the webui console)
+
+
 The webinterface also allows you to run or shelf the virtual machine.
 Make sure it is running!
 After you have added your pubkey you can access our server via its floating (=persistent) ip address.
