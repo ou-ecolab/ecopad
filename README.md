@@ -28,32 +28,32 @@ You can write an email to cac-help@cornell.edu
 
 After you have your credentials you can log in to  access the webinterface to our machine here https://redcloud.cac.cornell.edu/ 
 (Some instructions how to fill the fields are found here:https://www.cac.cornell.edu/wiki/index.php?title=OpenStack)
-The name of our server is ```ecopad-vm```
-To access our server you will need to create a rsa keypair
-- add the private key to YOUR .ssh/ directory *on the local computer* you want to use to access the server FROM.
-  (On a linux machine  ssh-keygen will put both keys there by default)
-- and the pubkey (e.g. id_rsa.pub) in the /home/YourLoginOnTheServer/.ssh/authorizedkeys file on the *server*
-If no colleage who already has root access is available (to help you put your key in `authorizedkeys`) you have to: 
-  - use the console of the webinterface to log in
-  - modify the /etc/ssh/sshd config to allow passwordlogin (change ```PasswordAuthentication no``` to     ```PasswordAuthentication yes```
-  - reload or restart the ssh service ```sysctl restart ssh```
-  - use the ```ssh-copy-id``` command from your local machine.
-    (to log in you have to have created the login and set a password with passwd possibly via the webui console)
-
-
-The webinterface also allows you to run or shelf the virtual machine.
-Make sure it is running!
-After you have added your pubkey you can access our server via its floating (=persistent) ip address.
-via
-```bash
-ssh ubuntu@128.84.9.117
-```
-ubuntu is the administrator account (can become root), use it to create a user for yourself, and add the user to the `sudo` and `docker` groups
+The name of our server is ```vm3```.
+You will need a login on the server. If no colleage who already has root access is available (to help you create yourLogin) you have to
+use the **console of the webinterface** to log in. (`console` is one of the actions on the drop down menu on the right hand side)
+The name of the administrator account (can become root) in the `console` is ubuntu. Use it to create a user for yourself, and add the user to the `sudo` and `docker` groups
 ```
 sudo adduser yourLogin
 sudo usermod -a -G sudo yourLogin
 sudo usermod -aG docker yourLogin
+sudo passwd yourLogin
+```
+ 
+To access the server conviniently via ssh you will need to 
+- create a rsa keypair (You do this on **your computer**, On a linux machine  ```ssh-keygen``` will create two files id_rsa and id_rsa.pub in your .shh dir )
+- add the private key to YOUR .ssh/ directory on **your computer** you want to use to access the server FROM.
+  and the pubkey (e.g. id_rsa.pub) in the /home/yourLogin/.ssh/authorizedkeys file on the **server**
+  - modify the /etc/ssh/sshd config to allow passwordlogin (change ```PasswordAuthentication no``` to     ```PasswordAuthentication yes```
+  - reload or restart the ssh service ```sysctl restart ssh```
+  - use the ```ssh-copy-id yourLogin@ecopad.cals.cornell.edu``` command from your local machine which automatically puts 
+    (to log in you have to have created the login and set a password (see above)
+    (After you have copied your key to the server you should reverse the changes in /etc/ssh/sshd_config and reload or restart the ssh service to enforce that everybody
 
+The webinterface also allows you to run or shelf the virtual machine.
+Make sure it is running!
+After you have added your pubkey you can access our server via its url.
+```bash
+ssh yourLogin@ecopad.cals.cornell.edu
 ```
 
 Some documentation can be found here https://www.cac.cornell.edu/wiki/index.php?title=Red_Cloud#Important_Pages
