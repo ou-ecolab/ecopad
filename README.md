@@ -28,7 +28,7 @@ You can write an email to cac-help@cornell.edu
 
 After you have your credentials you can log in to  access the webinterface to our machine here https://redcloud.cac.cornell.edu/ 
 (Some instructions how to fill the fields are found here:https://www.cac.cornell.edu/wiki/index.php?title=OpenStack)
-The name of our server is ```vm3```.
+The name of our server is ```ecopad_server```.
 You will need a login on the server. If no colleage who already has root access is available (to help you create yourLogin) you have to
 use the **console of the webinterface** to log in. (`console` is one of the actions on the drop down menu on the right hand side)
 The name of the administrator account (can become root) in the `console` is ubuntu. Use it to create a user for yourself, and add the user to the `sudo` and `docker` groups
@@ -57,6 +57,20 @@ ssh yourLogin@ecopad.cals.cornell.edu
 ```
 
 Some documentation can be found here https://www.cac.cornell.edu/wiki/index.php?title=Red_Cloud#Important_Pages
+
+## Https Authentication
+The webinterface of ecopad uses https which means that our (web) server needs a certificate to prove to clients (browser of a user) that
+we are indeed ```ecopad.cals.cornell.edu'''. To get and periodically renew this certificate we use an account granted to us by the cornell IT.
+The account details are found in a secure location. The setup is slightly **different from the standard procedure as implemented in the upstream cybercommons package**.
+We also use ```certbot''' but the service used by Cornell as described here https://confluence.cornell.edu/pages/viewpage.action?spaceKey=IDM&title=ACME instead of the free ```letsencrpyt'''.
+It is sometimes helpful (e.g to follow the initial setup following the instructions above) to interact with the 'certbot' docker container.
+```
+cd /srv/ecopad/cybercommons
+docker-compose -f dc_config/images/certbot-initialization.yml run --entrypoint /bin/bash cybercom_certbot
+```
+
+
+
  
 
 # Development: Extending or changing ecopad 
