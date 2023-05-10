@@ -63,13 +63,12 @@ The webinterface of ecopad uses https which means that our (web) server needs a 
 we are indeed ```ecopad.cals.cornell.edu```. To get and periodically renew this certificate we use an account granted to us by the cornell IT.
 The account details are found in the file ```acme-ecopad.txt``` stored at https://drive.google.com/drive/folders/1Hy55YHqMWz_62O9nsJb8SGClJZAgwbgG  for which access has to be granted. The setup is slightly **different from the standard procedure as implemented in the upstream cybercommons package**.
 We also use ```certbot``` but the service used by Cornell as described here https://confluence.cornell.edu/pages/viewpage.action?spaceKey=IDM&title=ACME instead of the free ```letsencrpyt```.
-It is sometimes helpful (e.g to follow the initial setup following the instructions above) to interact with the ```certbot``` docker container.
-To achieve this use:
+For testing it is sometimes helpful to run it manually, so there is now a new make target:
 ```
 cd /srv/ecopad/cybercommons
-docker-compose -f dc_config/images/certbot-initialization.yml run --entrypoint /bin/bash cybercom_certbot
+make renew_certbot_cornell
 ```
-
+All the necessary code can be reached starting at the ```Makefile``` 
 
  
 
