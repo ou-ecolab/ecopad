@@ -23,8 +23,8 @@ follow the [installations instrtuctions of the cybercommons package:](https://gi
 # Red cloud installation at CAC 
 (Please!!! read the whole paragraph before pasting it's contents)
 You need to have a CAC account (Cornell Advanced Computing) and access to 
-project rjk322_0091! 
-You can write an email to cac-help@cornell.edu
+project mm2796_0001! 
+You can write an email to cac-help@cornell.edu 
 
 After you have your credentials you can log in to  access the webinterface to our machine here https://redcloud.cac.cornell.edu/ 
 (Some instructions how to fill the fields are found here:https://www.cac.cornell.edu/wiki/index.php?title=OpenStack)
