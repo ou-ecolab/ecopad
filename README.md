@@ -73,13 +73,19 @@ All the necessary code can be reached starting at the ```Makefile```
  
 
 # Development: Extending or changing ecopad 
+The golden rule of version control: 
+
+*Only combine changes from the same **topic** in a single commit*.
+
+By doing this commit messages become documentation. This is essentail to keep the project alive with
+changing people. 
 ## Git setup explained
 ### Special Project Requirements
 The ecopad project has some requirement that can **not** be met by a **single** repository: 
    
 1. The project combines several codebases that live in different repositories.
    We solve this by the use of [Git-submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
-  
+   If you are unfamiliar with the concept, start by reading the chapter of  the Git book linked above!    
 1. The cybercommons infrastructure uses the repositories for additional tasks apart from version control, 
    namely to transfer the code for the tasks to the workers. 
    We will use temporary test branches to address this to avoid cluttering our version history.
