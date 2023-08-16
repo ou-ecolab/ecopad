@@ -22,6 +22,11 @@ follow the [installations instrtuctions of the cybercommons package:](https://gi
 
 # Red cloud installation at CAC 
 (Please!!! read the whole paragraph before pasting it's contents)
+
+In the day to day work **do not use the root account**. Only use it to set up your useraccount.
+Ohterwise **git  will not be able to track who changed what** on the server.
+
+
 You need to have a CAC account (Cornell Advanced Computing) and access to 
 project mm2796_0001! 
 You can write an email to cac-help@cornell.edu 
@@ -37,6 +42,8 @@ sudo adduser yourLogin
 sudo usermod -a -G sudo yourLogin
 sudo usermod -aG docker yourLogin
 sudo passwd yourLogin
+git config --global user.name "Your Name"
+git config --global user.email your_email@example.com
 ```
  
 To access the server conviniently via ssh you will need to 
